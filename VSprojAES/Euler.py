@@ -1,6 +1,6 @@
 from numpy import *
 # import matplotlib.pyplot as plt
-from IPython.core.debugger import Tracer
+# from IPython.core.debugger import Tracer
 from get_mesh import get_mesh
 
 

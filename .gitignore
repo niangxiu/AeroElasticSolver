@@ -3,3 +3,9 @@
 *.aux
 *.gz
 .gitignore
+*.pyc
+*.pyproj
+*.sln
+*.suo
+*.stackdump
+*.dat

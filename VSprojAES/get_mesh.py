@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from IPython.core.debugger import Tracer
+# from IPython.core.debugger import Tracer
 
 class mesh_class:
     # used to generate the mesh class for double-Mach problem

@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from IPython.core.debugger import Tracer
+# from IPython.core.debugger import Tracer
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from Euler import Euler
@@ -63,7 +63,7 @@ for i in range(0, ncycle):
                 u_cell[0,i,j], u_cell[1,i,j], u_cell[2,i,j], u_cell[3,i,j]) )
     
 
-im = plt.contourf(mesh.x_cell[1:-1,1:-1], mesh.y_cell[1:-1,1:-1], u_cell[0,1:-1,1:-1], 30)
-plt.colorbar(im)
-plt.show()
+#im = plt.contourf(mesh.x_cell[1:-1,1:-1], mesh.y_cell[1:-1,1:-1], u_cell[0,1:-1,1:-1], 30)
+#plt.colorbar(im)
+#plt.show()
 
