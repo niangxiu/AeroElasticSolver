@@ -1,11 +1,10 @@
-from numpy import *
+import numpy as np
 import math
-from IPython.core.debugger import Tracer
 
 def differ(A, B, nmode, mu, pi, lbd, u_m, Rx):
 
     Ap = B
-    Bp = zeros(nmode+1)
+    Bp = np.zeros(nmode+1)
 
     for n in range(1, nmode + 1):
 
@@ -43,17 +42,17 @@ def DowellModel(f, prmt):
     endtime = prmt.endTime * math.sqrt(prmt.D / prmt.m / prmt.a**4)
     dt = 0.001 # delta time step
     max_step = int(endtime/dt)
-    w = zeros(max_step)
-    wp = zeros(max_step)
+    w = np.zeros(max_step)
+    wp = np.zeros(max_step)
     
     nmode = 6
 
-    Anew = Bnew = A = B = zeros(nmode+1)
+    Anew = Bnew = A = B = np.zeros(nmode+1)
     B[1] = 0.1
-    Ak1 = Ak2 = Ak3 = Ak4 = zeros(nmode+1)
-    Bk1 = Bk2 = Bk3 = Bk4 = zeros(nmode+1)
-    A_all = zeros([nmode+1, max_step])
-    B_all = zeros([nmode+1, max_step])
+    Ak1 = Ak2 = Ak3 = Ak4 = np.zeros(nmode+1)
+    Bk1 = Bk2 = Bk3 = Bk4 = np.zeros(nmode+1)
+    A_all = np.zeros([nmode+1, max_step])
+    B_all = np.zeros([nmode+1, max_step])
 
     
     pi = math.pi

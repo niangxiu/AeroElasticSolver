@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+
 # from IPython.core.debugger import Tracer
 class mesh_class:
     # used to generate the mesh class for double-Mach problem
@@ -47,6 +49,8 @@ class mesh_class:
             self.w_bot = np.zeros(x_num + 2)
             self.wx_bot = np.zeros(x_num + 2)
             self.wt_bot = np.zeros(x_num + 2) # the moving velocity of plate at the bottom
+        else:
+            sys.exit('no such mesh')
 
 def get_cell_location(x_interface, y_interface):
     # [x_cell, y_cell] = get_cell_location(x_interface, y_interface)

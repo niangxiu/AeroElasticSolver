@@ -16,10 +16,10 @@ def main(end_time, lbd, nRx):
     #lbd = 200.0
     #nRx = 4
     Rx = -nRx * math.pi**2
-    prmt = parameter_class('AE_dowell', end_time, Rx, lbd)
+    prmt = parameter_class('Nibump', end_time, Rx, lbd)
     # mesh
-    x_num = 90
-    y_num = 30
+    x_num = 180
+    y_num = 60
     mesh = mesh_class(x_num, y_num, prmt)
     # get initial gas states
     u_cell = np.zeros((4, x_num + 2, y_num + 2))
@@ -54,7 +54,7 @@ def main(end_time, lbd, nRx):
     # open output file, write file title and initial states
     output.writeEvery(1, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp)
     # output cycle
-    outinterval = ncycle / 100
+    outinterval = ncycle / 1000
 
     for i in range(0, ncycle):
         time = i * nstep * dt
@@ -78,7 +78,7 @@ def main(end_time, lbd, nRx):
         # write to file 
         output.writeEvery(2, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp)
         if i % outinterval ==  0:
-            output.writeEvery(3, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp)
+            output.writeEvery(1, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp)
            
     output.writeEvery(1, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp)
     fileDM = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-DowellModel.dat']), 'w')
