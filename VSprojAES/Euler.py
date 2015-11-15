@@ -476,8 +476,8 @@ def Euler(mesh, u_initial, prmt, time):
     u_cell[:, :, 0] = bumpWall(u_cell[:, :, 1], mesh, prmt)
 
     # upper boundary
-    #u_cell[:, :, -1] = slipWall(u_cell[:, :, -2]) # slip wall
-    u_cell[:, :, -1] = superSonicIn(u_cell[:, :, -2], prmt) # supersonic inlet
+    u_cell[:, :, -1] = slipWall(u_cell[:, :, -2]) # slip wall
+    #u_cell[:, :, -1] = superSonicIn(u_cell[:, :, -2], prmt) # supersonic inlet
 
     ## boundary flux
     flux_x_interface[:,0,:] = \

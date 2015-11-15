@@ -49,4 +49,4 @@ def rk1S(residexpl, A, B, nmode, mesh, prmt, p, time, dt, nstep):
         A += kA1
         B += kB1
         time = time + dt
-    return [A, B, dBdtao]
+    return [A, B]

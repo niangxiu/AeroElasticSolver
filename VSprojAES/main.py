@@ -16,10 +16,10 @@ def main(end_time, lbd, nRx):
     #lbd = 200.0
     #nRx = 4
     Rx = -nRx * math.pi**2
-    prmt = parameter_class('Nibump', end_time, Rx, lbd)
+    prmt = parameter_class('AE_dowell', end_time, Rx, lbd)
     # mesh
-    x_num = 180
-    y_num = 60
+    x_num = 120
+    y_num = 40
     mesh = mesh_class(x_num, y_num, prmt)
     # get initial gas states
     u_cell = np.zeros((4, x_num + 2, y_num + 2))
@@ -39,8 +39,8 @@ def main(end_time, lbd, nRx):
     dBdtaonew = np.zeros(nmode + 1)
     A[1] = 0.1
     # other preparation
-    sigma = 0.01
-    dt = 0.001#sigma * min(mesh.dx, mesh.dy)
+    sigma = 0.2
+    dt = sigma * min(mesh.dx, mesh.dy)
     nstep = 1 
     ncycle = int(math.ceil(end_time / (nstep * dt)))
     dt = end_time / (nstep * ncycle)
@@ -50,31 +50,31 @@ def main(end_time, lbd, nRx):
     [w, wp] = get_w_wp(A, B, nmode)
     w_all = np.hstack((w_all, w))
     wp_all = np.hstack((wp_all, wp))
-    #[mesh.w_bot, mesh.wx_bot, mesh.wt_bot] = get_dydx_v_bot(A, B, nmode, mesh, prmt)
+    [mesh.w_bot, mesh.wx_bot, mesh.wt_bot] = get_dydx_v_bot(A, B, nmode, mesh, prmt)
     # open output file, write file title and initial states
     output.writeEvery(1, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp)
     # output cycle
-    outinterval = ncycle / 1000
+    outinterval = ncycle / 100
 
     for i in range(0, ncycle):
         time = i * nstep * dt
         print(time) 
         # set flow field boundary by structure
-        #[mesh.w_bot, mesh.wx_bot, mesh.wt_bot] = get_dydx_v_bot(A, B, nmode, mesh, prmt)
+        [mesh.w_bot, mesh.wx_bot, mesh.wt_bot] = get_dydx_v_bot(A, B, nmode, mesh, prmt)
         # solve flow field
         u_new = rk1FF(Euler, mesh, prmt, u_cell, time, dt, nstep)
         [p_new,temp] = get_p_H(u_new)
         # solve structure
-        #[A_new, B_new] = rk1S(plate, A, B, nmode, mesh, prmt, p_new, time, dt, nstep)
+        [A_new, B_new] = rk1S(plate, A, B, nmode, mesh, prmt, p_new, time, dt, nstep)
         # step
         u_cell = u_new
         p_cell = p_new
-        #A = A_new
-        #B = B_new
+        A = A_new
+        B = B_new
         # get w and wp
-        #[w, wp] = get_w_wp(A, B, nmode)
-        #w_all = np.hstack((w_all, w))
-        #wp_all = np.hstack((wp_all, wp))
+        [w, wp] = get_w_wp(A, B, nmode)
+        w_all = np.hstack((w_all, w))
+        wp_all = np.hstack((wp_all, wp))
         # write to file 
         output.writeEvery(2, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp)
         if i % outinterval ==  0:
@@ -86,17 +86,17 @@ def main(end_time, lbd, nRx):
     filePiston = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-PistonTheory.dat']), 'w')
     output.writePiston(filePiston, prmt, mesh)
 
-    w_all = np.array(w_all)
-    wp_all = np.array(wp_all)
-    fileMoment = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-Moment.dat']), 'w')
-    fileMoment.write('{:f} {:f} \n'.format(w_all.sum()/w_all.size, wp_all.sum()/wp_all.size))
-    fileMoment.write('{:f} {:f} \n'.format(wD_all.sum()/wD_all.size, wpD_all.sum()/wpD_all.size))
-    fileMoment.write('{:f} {:f} \n'.format((w_all**2).sum()/w_all.size, (wp_all**2).sum()/wp_all.size))
-    fileMoment.write('{:f} {:f} \n'.format((wD_all**2).sum()/wD_all.size, (wpD_all**2).sum()/wpD_all.size))
+    ## calculate some static characteristics
+    #w_all = np.array(w_all)
+    #wp_all = np.array(wp_all)
+    #fileMoment = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-Moment.dat']), 'w')
+    #fileMoment.write('{:f} {:f} \n'.format(w_all.sum()/w_all.size, wp_all.sum()/wp_all.size))
+    #fileMoment.write('{:f} {:f} \n'.format(wD_all.sum()/wD_all.size, wpD_all.sum()/wpD_all.size))
+    #fileMoment.write('{:f} {:f} \n'.format((w_all**2).sum()/w_all.size, (wp_all**2).sum()/wp_all.size))
+    #fileMoment.write('{:f} {:f} \n'.format((wD_all**2).sum()/wD_all.size, (wpD_all**2).sum()/wpD_all.size))
 
 
-
-end_time = 100.0
+end_time = 10.0
 main(end_time, 300, 4)
 #main(end_time, 200, 4)
 #main(end_time, 150, 4)
