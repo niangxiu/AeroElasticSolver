@@ -476,8 +476,8 @@ def Euler(mesh, u_initial, prmt, time):
     u_cell[:, :, 0] = bumpWall(u_cell[:, :, 1], mesh, prmt)
 
     # upper boundary
-    u_cell[:, :, -1] = slipWall(u_cell[:, :, -2]) # slip wall
-    #u_cell[:, :, -1] = superSonicIn(u_cell[:, :, -2], prmt) # supersonic inlet
+    #u_cell[:, :, -1] = slipWall(u_cell[:, :, -2]) # slip wall
+    u_cell[:, :, -1] = superSonicIn(u_cell[:, :, -2], prmt) # supersonic inlet
 
     ## boundary flux
     flux_x_interface[:,0,:] = \
@@ -530,3 +530,40 @@ def Euler(mesh, u_initial, prmt, time):
     
     
     return u_cell_resi
+
+
+# linearized Euler solver, super-sonic
+def linEuler(mesh, pq, prmt, time):
+    
+    M = mesh.x_num
+    N = mesh.y_num
+    p_in, q_in = pq.reshape([2, N+2, M+2])
+
+    p, q = np.zeros([2, N+2, M+4])
+    p[:,1:-1] = p_in
+    q[:,1:-1] = q_in
+
+    # upper and lower b.c. for p
+    p[:,-1] = p[:,-3]
+    p[:,0] = p[:,2] + prmt.rho*(Ftt + 2* prmt.u * Fxt + prmt.u **2 *  Fxx ) * 2* dy
+    
+    dqdt, dpdt = np.zeros([2, N+2, M+4])
+
+    # left boundary
+    q[0,1:-1]    = 0
+    p[0,1:-1]    = 0
+
+    # right boundary
+    q[-1,1:-1] = q[-2,1:-1]
+    p[-1,1:-1] = p[-2,1:-1]
+ 
+    # upper wind scheme
+    dqdt[1,1:-1]    = 0
+    dpdt[1,1:-1]    = 0
+
+    dqdt[2:-1,1:-1]     = c0**2 * (p[2:-1,:-2] + p[2:-1,2:] - 2*p[2:-1,1:-1]) / dy**2 \
+                        + c0**2 * (p[1:-2,1:-1] + p[3:,1:-1] - 2*p[2:-1,1:-1]) / dx**2 \
+                        - u0 * (3*q[2:-1,1:-1] - 4*q[1:-2,1:-1] + q[:-3,1:-1]) / (2 * dx)
+    dpdt[2:-1,1:-1]     = q[2:-1,1:-1] - u0 * (p[3:,1:-1] - p[1:-2,1:-1]) / (2 * dx)
+
+    return np.ravel([dpdt[:,1:-1], dqdt[:,1:-1]])

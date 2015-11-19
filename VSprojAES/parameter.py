@@ -50,7 +50,7 @@ class parameter_class:
             self.p = 1.0/self.gamma # pressure
             # dimensionless groups (\pi)
 
-            self.Mach = 2.0 
+            self.Mach = 1.2
             self.mu = 0.01 * self.Mach
             self.X = 0.75
             self.nu = 0.3

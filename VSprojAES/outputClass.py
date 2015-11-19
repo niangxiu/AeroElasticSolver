@@ -85,26 +85,26 @@ class outputClass():
             f. write('{:f} {:f} \n'.format(mesh.x_cell[i,0], p[i]))
         self.counterPiston += 1
 
-    def writeEvery(self, flag, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp):
+    def writeEvery(self, fluid, flag, nRx, lbd, u_cell, p_cell, mesh, prmt, A, B, nmode, w, wp):
         if self.counterEvery == 1:
 
-            self.fileFF = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-flowfield.dat']), 'w')
-            self.fileMach = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-MachOnPlate.dat']), 'w')
-            self.filePrs = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-pressureOnPlate.dat']), 'w')
+            #self.fileFF = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-flowfield.dat']), 'w')
+            #self.fileMach = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-MachOnPlate.dat']), 'w')
+            #self.filePrs = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-pressureOnPlate.dat']), 'w')
             self.filePP = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-phasePlane.dat']), 'w')
-            self.fileS = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-structure.dat']), 'w')
+            #self.fileS = open(''.join(['lbd', str(int(lbd)), '-Rx', str(nRx), '-structure.dat']), 'w')
 
         if flag == 1:
-            # reconstruction
-            u_cell[:, 0, :] = subSonicIn(u_cell[:, 1, :], prmt)# left boundary, supersonic outlet
-            u_cell[:, -1, :] = subSonicOut(u_cell[:, -2, :], prmt)# right boundary, sub-sonic outlet
-            u_cell[:, :, 0] = bumpWall(u_cell[:, :, 1], mesh, prmt)# lower boundary, bump + slip wall
-            u_cell[:, :, -1] = slipWall(u_cell[:, :, -2]) # upper boundary, slip wall
-    
-            Mach = get_Mach(u_cell, p_cell)
-            ptotal = get_Ptotal(p_cell, Mach, prmt.gamma)
-            self.writeFlowField(self.fileFF, mesh, p_cell-prmt.p, u_cell, ptotal-prmt.ptotal, Mach)
-            self.writeMach(self.fileMach, mesh, Mach[:,1], Mach[:, -2])
+            if fluid == 'Euler':
+                # reconstruction
+                u_cell[:, 0, :] = subSonicIn(u_cell[:, 1, :], prmt)# left boundary, supersonic outlet
+                u_cell[:, -1, :] = subSonicOut(u_cell[:, -2, :], prmt)# right boundary, sub-sonic outlet
+                u_cell[:, :, 0] = bumpWall(u_cell[:, :, 1], mesh, prmt)# lower boundary, bump + slip wall
+                u_cell[:, :, -1] = slipWall(u_cell[:, :, -2]) # upper boundary, slip wall
+                Mach = get_Mach(u_cell, p_cell)
+                ptotal = get_Ptotal(p_cell, Mach, prmt.gamma)
+                self.writeFlowField(self.fileFF, mesh, p_cell-prmt.p, u_cell, ptotal-prmt.ptotal, Mach)
+                self.writeMach(self.fileMach, mesh, Mach[:,1], Mach[:, -2])
             self.writePressure(self.filePrs, mesh, p_cell[:,1]-prmt.p)
             self.writePhasePlane(self.filePP, w, wp)
             self.writeStructure(self.fileS, mesh)
